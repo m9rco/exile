@@ -1,0 +1,23 @@
+sudo: required
+
+services:
+  - docker
+
+env:
+  DOCKER_COMPOSE_VERSION: 1.8.1
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - chmod +x /usr/local/bin/docker-compose
+
+  - docker version
+  - 
+  - docker build --no-cache -t m9rco/alpine-php:7.3 -f docker-build/php/7.3/Dockerfile docker-build/php/7.3/
+  - docker build --no-cache -t m9rco/alpine-php:7.3-dev -f docker-build/php/7.3/Dockerfile.dev docker-build/php/7.3/
+  - docker build --no-cache -t m9rco/alpine-php:7.3-front -f docker-build/php/7.3/Dockerfile.front docker-build/php/7.3/
+
+script:
+  - docker exec php7.3 php -v
+  - docker exec php7.3 sh -c "php -v | grep OPcache"

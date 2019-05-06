@@ -1,0 +1,3 @@
+package: github.com/m9rco/exile
+import:
+   - package: github.com/gorhill/cronexpr

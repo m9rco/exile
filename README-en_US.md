@@ -5,10 +5,12 @@
 > Exile , 一款基于GoLang的分布式任务调度系统
 
 <p align="center">
+  
+[![Author](https://img.shields.io/badge/author-m9rco-red.svg?style=flat-square)](https://about.me/pushaowei/)
 [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=102)](https://travis-ci.org/m9rco/exile/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/m9rco/exile/pulls)
-<a href="https://about.me/pushaowei"><img alt="Author" src="https://img.shields.io/badge/author-m9rco-red.svg?style=flat-square"/></a>
-<a href="https://travis-ci.org/m9rco/exile"><img alt="Travis CI" src="https://img.shields.io/travis/m9rco/exile.svg?style=flat-square"/></a>
+[![Build Status](https://img.shields.io/travis/m9rco/exile.svg?style=flat-square)](https://travis-ci.org/m9rco/exile)
+[![Download Latest](https://img.shields.io/badge/Download-Latest%20Version-blue.svg)](https://github.com/m9rco/exile/archive/master.zip)
 </p>
 
 ------------------------------
