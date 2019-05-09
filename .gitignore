@@ -14,4 +14,4 @@
 /prepare
 .idea/
 vendor/
-
+Gopkg.lock
