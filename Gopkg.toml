@@ -26,12 +26,12 @@
 
 
 [[constraint]]
-  name = "github.com/gorhill/cronexpr"
-  version = "1.0.0"
+  name = "github.com/etcd-io/etcd"
+  version = "3.3.13"
 
 [[constraint]]
-  name = "go.etcd.io/etcd"
-  version = "2.3.8"
+  name = "github.com/gorhill/cronexpr"
+  version = "1.0.0"
 
 [prune]
   go-tests = true
