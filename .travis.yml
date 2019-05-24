@@ -13,11 +13,9 @@ before_install:
   - chmod +x /usr/local/bin/docker-compose
 
   - docker version
-  - 
-  - docker build --no-cache -t m9rco/alpine-php:7.3 -f docker-build/php/7.3/Dockerfile docker-build/php/7.3/
-  - docker build --no-cache -t m9rco/alpine-php:7.3-dev -f docker-build/php/7.3/Dockerfile.dev docker-build/php/7.3/
-  - docker build --no-cache -t m9rco/alpine-php:7.3-front -f docker-build/php/7.3/Dockerfile.front docker-build/php/7.3/
+  -
+  - docker-compose up -d
 
 script:
-  - docker exec php7.3 php -v
-  - docker exec php7.3 sh -c "php -v | grep OPcache"
+  - docker exec 3313_etcd_1 sh -c 'ETCDCTL_API=3  etcdctl get "/cron/jobs" --prefix'
+  - sh ./tests/exile_curl_unit_test.sh

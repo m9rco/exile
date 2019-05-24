@@ -7,3 +7,39 @@ services:
       - "29000:9000"
     volumes:
       - $PWD:/app:rw
+    networks:
+      exile_network:
+        ipv4_address: 172.16.238.3
+  etcd:
+    image: "m9rco/etcd:3.3.13"
+    ports:
+      - "2222:22"
+      - "29000:9000"
+    depends_on:
+      - golang-dev
+    ulimits:
+      nproc: 65535
+    restart: always
+    networks:
+      exile_network:
+        ipv4_address: 172.16.238.4
+  mongodb:
+    image: "m9rco/go:1.1-dev"
+    ports:
+      - "2222:22"
+      - "29000:9000"
+    depends_on:
+      - golang-dev
+    volumes:
+      - $PWD:/app:rw
+    networks:
+      exile_network:
+        ipv4_address: 172.16.238.5
+networks:
+  exile_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
+          gateway: 172.16.238.1
