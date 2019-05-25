@@ -1,7 +1,6 @@
 package master
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/m9rco/exile/kernel/common"
@@ -9,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -25,12 +25,7 @@ var (
 /*
 // Save the jobs
 
-POST
-{
-   name: "Job",
-   command: "echo Job",
-   cronExpr: '* * * * * '
-}
+method POST /job  name=job1&command=echo hello&cronExpr=*\/5 * * * * * *
  */
 func handleJobSave(writer http.ResponseWriter, request *http.Request) {
 	var (
@@ -38,13 +33,15 @@ func handleJobSave(writer http.ResponseWriter, request *http.Request) {
 		bytes        []byte
 		jobManageSev JobManager
 	)
+
 	if err = request.ParseForm(); err != nil {
 		goto ERROR
 	}
-	if err = json.Unmarshal([]byte(request.PostForm.Get("job")), &job); err != nil {
-		goto ERROR
+	job = common.Job{
+		Name:     request.PostForm.Get("name"),
+		Command:  request.PostForm.Get("command"),
+		CronExpr: request.PostForm.Get("cronExpr"),
 	}
-
 	jobManageSev = common.Manage.GetSingleton("JobManager").(JobManager)
 	if oldJob, err = jobManageSev.SaveJob(&job); err != nil {
 		goto ERROR
@@ -66,9 +63,7 @@ ERROR:
 
 // Delete the jobs
 
-method DELETE
-
-/job/job1
+method DELETE /job/{name}
 */
 func handleJobDelete(writer http.ResponseWriter, request *http.Request) {
 	var (
@@ -101,32 +96,22 @@ ERROR:
 
 /*
 
-// Delete the jobs
+// List the jobs
 
-method POST
-{
-name: "Job",
-command: "echo Job",
-cronExpr: '* * * * * '
-}
+method GET  /job
 */
-func handleJobList(writer http.ResponseWriter, request *http.Request) {
+func handleJobList(writer http.ResponseWriter, _ *http.Request) {
 	var (
-		oldJob       *common.Job
+		jobList      []*common.Job
 		bytes        []byte
 		jobManageSev JobManager
-		name         string
 	)
-	if err = request.ParseForm(); err != nil {
-		goto ERROR
-	}
 
-	name = request.PostForm.Get("name")
 	jobManageSev = common.Manage.GetSingleton("JobManager").(JobManager)
-	if oldJob, err = jobManageSev.DeleteJob(name); err != nil {
+	if jobList, err = jobManageSev.ListJobs(); err != nil {
 		goto ERROR
 	}
-	if bytes, err = common.BuildResponse(0, "success", oldJob); err == nil {
+	if bytes, err = common.BuildResponse(0, "success", jobList); err == nil {
 		writer.Write(bytes)
 	}
 	return
@@ -136,6 +121,85 @@ ERROR:
 		writer.Write(bytes)
 	}
 	return
+}
+
+/**
+// Kill the jobs
+PUT /job/{name}
+
+ */
+func handleJobKill(writer http.ResponseWriter, request *http.Request) {
+	var (
+		bytes        []byte
+		jobManageSev JobManager
+		name         string
+		vars         map[string]string
+	)
+	if err = request.ParseForm(); err != nil {
+		goto ERROR
+	}
+	vars = mux.Vars(request)
+	name = vars["name"]
+	jobManageSev = common.Manage.GetSingleton("JobManager").(JobManager)
+	if err = jobManageSev.KillJob(name); err != nil {
+		goto ERROR
+	}
+	if bytes, err = common.BuildResponse(0, "success", nil); err == nil {
+		writer.Write(bytes)
+	}
+	return
+ERROR:
+	// return to the front anomalies. errno -1
+	if bytes, err = common.BuildResponse(-1, err.Error(), nil); err == nil {
+		writer.Write(bytes)
+	}
+	return
+}
+
+func handleJobLog(writer http.ResponseWriter, request *http.Request) {
+	var (
+		err        error
+		name       string
+		skipParam  string
+		limitParam string
+		skip       int
+		limit      int
+		logArr     []*common.JobLog
+		bytes      []byte
+	)
+
+	if err = request.ParseForm(); err != nil {
+		goto ERR
+	}
+
+	name = request.Form.Get("name")
+	skipParam = request.Form.Get("skip")
+	limitParam = request.Form.Get("limit")
+	if skip, err = strconv.Atoi(skipParam); err != nil {
+		skip = 0
+	}
+	if limit, err = strconv.Atoi(limitParam); err != nil {
+		limit = 20
+	}
+
+	if logArr, err = G_logMgr.ListLog(name, skip, limit); err != nil {
+		goto ERR
+	}
+
+	// 正常应答
+	if bytes, err = common.BuildResponse(0, "success", logArr); err == nil {
+		writer.Write(bytes)
+	}
+	return
+
+ERR:
+	if bytes, err = common.BuildResponse(-1, err.Error(), nil); err == nil {
+		writer.Write(bytes)
+	}
+}
+
+func handleWorker(_ http.ResponseWriter, _ *http.Request) {
+
 }
 
 // Initialize the service
@@ -156,6 +220,9 @@ func InitApiServer() (err error) {
 	router.HandleFunc(common.API_JOB_CREATE, handleJobSave).Methods("POST")
 	router.HandleFunc(common.API_JOB_DELETE, handleJobDelete).Methods("DELETE")
 	router.HandleFunc(common.API_JOB_LIST, handleJobList).Methods("GET")
+	router.HandleFunc(common.API_JOB_KILL, handleJobKill).Methods("PUT")
+	router.HandleFunc(common.API_JOB_LOG, handleJobLog).Methods("GET")
+	router.HandleFunc(common.API_WORK_LIST, handleWorker).Methods("GET")
 
 	// Start TCP listener
 	if listener, err = net.Listen(
@@ -168,7 +235,7 @@ func InitApiServer() (err error) {
 		Addr:              "",
 		Handler:           router,
 		TLSConfig:         nil,
-		ReadTimeout:       time.Duration(configure.GetInt64("server", "read_timeout")) * time.Millisecond,
+		ReadTimeout:       time.Duration(configure.GetInt32("server", "read_timeout")) * time.Millisecond,
 		ReadHeaderTimeout: 0,
 		WriteTimeout:      time.Duration(configure.GetInt32("server", "write_timeout")) * time.Millisecond,
 		IdleTimeout:       0,

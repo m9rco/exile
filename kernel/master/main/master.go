@@ -5,12 +5,13 @@ import (
 	"github.com/m9rco/exile/kernel/common"
 	"github.com/m9rco/exile/kernel/master"
 	"runtime"
-	"time"
+	"sync"
 )
 
 func main() {
 	// Initialize the environment
 	runtime.GOMAXPROCS(runtime.NumCPU())
+	var wg sync.WaitGroup
 	var (
 		err error
 	)
@@ -28,8 +29,8 @@ func main() {
 		fmt.Printf("init Api Serve fail: %v", err)
 		goto ERROR
 	}
-	for {
-		time.Sleep(1 * time.Second)
-	}
+
+	wg.Add(1)
+	wg.Wait()
 ERROR:
 }

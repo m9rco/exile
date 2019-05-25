@@ -3,6 +3,7 @@ package master
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/coreos/etcd/mvcc/mvccpb"
 	"github.com/etcd-io/etcd/clientv3"
 	"github.com/m9rco/exile/_vendor-20190511225511/github.com/coreos/etcd/Godeps/_workspace/src/golang.org/x/net/context"
 	"github.com/m9rco/exile/kernel/common"
@@ -29,9 +30,9 @@ func InitJobMgr() (err error) {
 	}
 	configure := configureSource.(utils.IniParser)
 	config = clientv3.Config{
-		Endpoints:            []string{configure.GetString("server", "etcd_endpoints")},
+		Endpoints:            []string{configure.GetString("etcd", "endpoints")},
 		AutoSyncInterval:     0,
-		DialTimeout:          time.Duration(configure.GetInt64("server", "etcd_timeout")) * time.Millisecond,
+		DialTimeout:          time.Duration(configure.GetInt64("etcd", "dial_timeout")) * time.Millisecond,
 		DialKeepAliveTime:    0,
 		DialKeepAliveTimeout: 0,
 		MaxCallSendMsgSize:   0,
@@ -53,6 +54,28 @@ func InitJobMgr() (err error) {
 		lease:  clientv3.NewLease(client),
 	})
 
+	return
+}
+
+func (jobMgr *JobManager) ListJobs() (jobList []*common.Job, err error) {
+	var (
+		getResp *clientv3.GetResponse
+		kvPair  *mvccpb.KeyValue
+		job     *common.Job
+	)
+	if getResp, err = jobMgr.kv.Get(context.TODO(), common.JOB_SAVE_DIR, clientv3.WithPrefix()); err != nil {
+		return
+	}
+	fmt.Println(getResp)
+	jobList = make([]*common.Job, 0)
+	for _, kvPair = range getResp.Kvs {
+		job = &common.Job{}
+		if err = json.Unmarshal(kvPair.Value, job); err != nil {
+			err = nil
+			continue
+		}
+		jobList = append(jobList, job)
+	}
 	return
 }
 
@@ -98,5 +121,16 @@ func (jobMgr *JobManager) DeleteJob(name string) (oldJob *common.Job, err error)
 		}
 		oldJob = &oldJobObj
 	}
+	return
+}
+
+func (jobMgr *JobManager) KillJob(jobName string) (err error) {
+	var (
+		leaseGrantResp *clientv3.LeaseGrantResponse
+	)
+	if leaseGrantResp, err = jobMgr.lease.Grant(context.TODO(), 1); err != nil {
+		return
+	}
+	_, err = jobMgr.kv.Put(context.TODO(), common.JOB_KILLER_DIR+jobName, "", clientv3.WithLease(leaseGrantResp.ID))
 	return
 }
