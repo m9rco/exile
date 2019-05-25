@@ -7,10 +7,9 @@ import (
 	"sync"
 )
 
-func main() {
+func init() {
 	// Initialize the environment
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	var wg sync.WaitGroup
 	var (
 		err error
 	)
@@ -19,6 +18,7 @@ func main() {
 	if err = common.InitContainer(); err != nil {
 		goto ERROR
 	}
+
 	// Initialize the serve register
 	if err = worker.InitRegister(); err != nil {
 		goto ERROR
@@ -44,7 +44,12 @@ func main() {
 		goto ERROR
 	}
 
+ERROR:
+}
+
+func main() {
+	var wg sync.WaitGroup
+
 	wg.Add(1)
 	wg.Wait()
-ERROR:
 }

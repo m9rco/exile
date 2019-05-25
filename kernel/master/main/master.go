@@ -8,13 +8,13 @@ import (
 	"sync"
 )
 
-func main() {
+func init() {
 	// Initialize the environment
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	var wg sync.WaitGroup
 	var (
 		err error
 	)
+
 	// Initialize the container
 	if err = common.InitContainer(); err != nil {
 		fmt.Printf("init container fail: %v", err)
@@ -32,8 +32,12 @@ func main() {
 		fmt.Printf("init Api Serve fail: %v", err)
 		goto ERROR
 	}
+ERROR:
+}
+
+func main() {
+	var wg sync.WaitGroup
 
 	wg.Add(1)
 	wg.Wait()
-ERROR:
 }
