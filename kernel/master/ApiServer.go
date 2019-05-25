@@ -23,9 +23,8 @@ var (
 )
 
 /*
-// Save the jobs
-
-method POST /job  name=job1&command=echo hello&cronExpr=*\/5 * * * * * *
+	Save the Jobs
+	method POST /job  name=job1&command=echo hello&cronExpr=*\/5 * * * * * *
  */
 func handleJobSave(writer http.ResponseWriter, request *http.Request) {
 	var (
@@ -60,10 +59,8 @@ ERROR:
 }
 
 /*
-
-// Delete the jobs
-
-method DELETE /job/{name}
+	Delete the jobs
+	method DELETE /job/{name}
 */
 func handleJobDelete(writer http.ResponseWriter, request *http.Request) {
 	var (
@@ -95,10 +92,8 @@ ERROR:
 }
 
 /*
-
-// List the jobs
-
-method GET  /job
+    List the jobs
+	method GET  /job
 */
 func handleJobList(writer http.ResponseWriter, _ *http.Request) {
 	var (
@@ -124,9 +119,8 @@ ERROR:
 }
 
 /**
-// Kill the jobs
-PUT /job/{name}
-
+	Kill the jobs
+	PUT /job/{name}
  */
 func handleJobKill(writer http.ResponseWriter, request *http.Request) {
 	var (
@@ -166,6 +160,7 @@ func handleJobLog(writer http.ResponseWriter, request *http.Request) {
 		limit      int
 		logArr     []*common.JobLog
 		bytes      []byte
+		LogMange   LogManager
 	)
 
 	if err = request.ParseForm(); err != nil {
@@ -182,11 +177,12 @@ func handleJobLog(writer http.ResponseWriter, request *http.Request) {
 		limit = 20
 	}
 
-	if logArr, err = G_logMgr.ListLog(name, skip, limit); err != nil {
+	LogMange = common.Manage.GetSingleton("LogManager").(LogManager)
+	if logArr, err = LogMange.ListLog(name, skip, limit); err != nil {
 		goto ERR
 	}
 
-	// 正常应答
+	// response
 	if bytes, err = common.BuildResponse(0, "success", logArr); err == nil {
 		writer.Write(bytes)
 	}

@@ -18,14 +18,14 @@ var (
 
 type factory = func() (interface{}, error)
 
-// 容器
+// Container
 type Container struct {
 	sync.Mutex
 	singletons map[string]interface{}
 	factories  map[string]factory
 }
 
-// 容器实例化
+// Container instantiation
 func NewContainer() *Container {
 	return &Container{
 		singletons: make(map[string]interface{}),
@@ -33,19 +33,19 @@ func NewContainer() *Container {
 	}
 }
 
-// 注册单例对象
+// registered singleton object
 func (p *Container) SetSingleton(name string, singleton interface{}) {
 	p.Lock()
 	p.singletons[name] = singleton
 	p.Unlock()
 }
 
-// 获取单例对象
+// get singleton object
 func (p *Container) GetSingleton(name string) interface{} {
 	return p.singletons[name]
 }
 
-// 获取实例对象
+// get prototype object
 func (p *Container) GetPrototype(name string) (interface{}, error) {
 	factory, ok := p.factories[name]
 	if !ok {
@@ -54,14 +54,14 @@ func (p *Container) GetPrototype(name string) (interface{}, error) {
 	return factory()
 }
 
-// 设置实例对象工厂
+// get prototype object
 func (p *Container) SetPrototype(name string, factory factory) {
 	p.Lock()
 	p.factories[name] = factory
 	p.Unlock()
 }
 
-// 注入依赖
+// ensure
 func (p *Container) Ensure(instance interface{}) error {
 	elemType := reflect.TypeOf(instance).Elem()
 	ele := reflect.ValueOf(instance).Elem()
@@ -93,7 +93,7 @@ func (p *Container) Ensure(instance interface{}) error {
 	return nil
 }
 
-// 获取需要注入的依赖名称
+// get inject name
 func (p *Container) injectName(tag string) string {
 	tags := strings.Split(tag, ",")
 	if len(tags) == 0 {
@@ -102,7 +102,6 @@ func (p *Container) injectName(tag string) string {
 	return tags[0]
 }
 
-// 检测是否单例依赖
 func (p *Container) isSingleton(tag string) bool {
 	tags := strings.Split(tag, ",")
 	for _, name := range tags {
@@ -113,7 +112,6 @@ func (p *Container) isSingleton(tag string) bool {
 	return true
 }
 
-// 检测是否实例依赖
 func (p *Container) isPrototype(tag string) bool {
 	tags := strings.Split(tag, ",")
 	for _, name := range tags {
@@ -124,7 +122,6 @@ func (p *Container) isPrototype(tag string) bool {
 	return false
 }
 
-// 打印容器内部实例
 func (p *Container) String() string {
 	lines := make([]string, 0, len(p.singletons)+len(p.factories)+2)
 	lines = append(lines, "singletons:")

@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"github.com/m9rco/exile/kernel/common"
 	"github.com/m9rco/exile/kernel/utils"
-	"w"
+	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/clientopt"
 	"github.com/mongodb/mongo-go-driver/mongo/findopt"
 	"time"
 )
 
-type LogMgr struct {
+type LogManager struct {
 	client        *mongo.Client
 	logCollection *mongo.Collection
 }
@@ -33,14 +33,14 @@ func InitLogMgr() (err error) {
 		return
 	}
 
-	common.Manage.SetSingleton("LogManager", LogMgr{
+	common.Manage.SetSingleton("LogManager", LogManager{
 		client:        client,
 		logCollection: client.Database("cron").Collection("log"),
 	})
 	return
 }
 
-func (logMgr *LogMgr) ListLog(name string, skip int, limit int) (logArr []*common.JobLog, err error) {
+func (logMgr *LogManager) ListLog(name string, skip int, limit int) (logArr []*common.JobLog, err error) {
 	var (
 		filter  *common.JobLogFilter
 		logSort *common.SortLogByStartTime

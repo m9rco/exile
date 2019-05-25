@@ -8,7 +8,6 @@ import (
 	"github.com/m9rco/exile/_vendor-20190511225511/github.com/coreos/etcd/Godeps/_workspace/src/golang.org/x/net/context"
 	"github.com/m9rco/exile/kernel/common"
 	"github.com/m9rco/exile/kernel/utils"
-	"os"
 	"time"
 )
 
@@ -25,8 +24,7 @@ func InitJobMgr() (err error) {
 		configureSource interface{}
 	)
 	if configureSource, err = common.Manage.GetPrototype("configure"); err != nil {
-		fmt.Printf("fail to read file: %v", err)
-		os.Exit(1)
+		return
 	}
 	configure := configureSource.(utils.IniParser)
 	config = clientv3.Config{
