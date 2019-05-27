@@ -1,6 +1,6 @@
 version: '2.0'
 services:
-  golang-dev:
+  golang:
     image: "m9rco/go:1.10.8-dev"
     ports:
       - "2222:22"
@@ -15,22 +15,19 @@ services:
       exile_network:
         ipv4_address: 172.16.238.2
   etcd:
-    image: "m9rco/etcd:3.3.13"
+    image: "m9rco/etcd:3.3.13-dev"
     ports:
       - "2379:2379"
       - "2380:2380"
     ulimits:
       nproc: 65535
-    restart: always
     networks:
       exile_network:
         ipv4_address: 172.16.238.3
   mongodb:
-    image: "m9rco/mongodb:3.6.7"
+    image: "m9rco/mongodb:3.6.7-dev"
     ports:
       - "27017:27017"
-    volumes:
-      - $PWD:/app:rw
     networks:
       exile_network:
         ipv4_address: 172.16.238.4
