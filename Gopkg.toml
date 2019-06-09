@@ -30,7 +30,8 @@
   version = "3.3.13"
 
 [[constraint]]
-  name = "github.com/mongodb/mongo-go-driver/mongo"
+  name = "github.com/mongodb/mongo-go-driver"
+  version = "0.0.17"
 
 [[constraint]]
   name = "github.com/gorhill/cronexpr"
