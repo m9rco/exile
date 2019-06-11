@@ -1,8 +1,8 @@
 <p align="center">
-<img src="https://p5.ssl.qhimgs0.com/t01eee2efd1cc1e35d4.jpg" width="200" height="200" />
+<img src="https://p5.ssl.qhimgs0.com/t01eee2efd1cc1e35d4.jpg" />
 </p>
 
-> Exile , 一款基于GoLang的分布式任务调度系统
+> Exile , A distributed task scheduling based on GoLang system
 
 <p align="center">
   
@@ -14,8 +14,8 @@
 </p>
 
 ------------------------------
-🇨🇳简体中文 | 🇺🇸[English](README-en_US.md)
+🇨🇳[README.md](简体中文) | English
 
 ## 简介
 
-**Exile** [ˈeksaɪl]，流放; 流亡; 放逐; 流亡国外者; 被流放者; 离乡背井者; 
+**Exile** [ˈeksaɪl]

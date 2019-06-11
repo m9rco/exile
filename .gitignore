@@ -15,6 +15,5 @@
 /prepare
 .idea/
 vendor/
-Gopkg.lock
 _vendor-20190511225511/
 

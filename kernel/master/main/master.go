@@ -37,7 +37,7 @@ ERROR:
 
 func main() {
 	var wg sync.WaitGroup
-
+w
 	wg.Add(1)
 	wg.Wait()
 }
