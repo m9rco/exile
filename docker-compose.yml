@@ -1,36 +1,79 @@
 version: '2.0'
 services:
   golang:
+    container_name: golang
     image: "m9rco/go:1.10.8-dev"
     ports:
       - "2222:22"
       - "80:80"
       - "1234:1234"
     volumes:
-      - $PWD:/app:rw
+      - $GOPATH:/app:rw
+    environment:
+      - GOPATH=/app
     depends_on:
-      - etcd
+      - etcd_01
+      - etcd_02
       - mongodb
     networks:
       exile_network:
         ipv4_address: 172.16.238.2
-  etcd:
-    image: "m9rco/etcd:3.3.13-dev"
+  etcd_01:
+    container_name: etcd_01
+    image: "m9rco/etcd:3.3.13"
     ports:
-      - "2379:2379"
-      - "2380:2380"
+      - "2379"
+      - "2380"
     ulimits:
       nproc: 65535
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_NAME=etcd_01
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd_01:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd_01:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd_01=http://etcd_01:2380,etcd_02=http://etcd_02:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+    extra_hosts:
+      - "etcd_01:172.16.238.3"
+      - "etcd_02:172.16.238.4"
     networks:
       exile_network:
         ipv4_address: 172.16.238.3
+  etcd_02:
+    container_name: etcd_02
+    image: "m9rco/etcd:3.3.13"
+    ports:
+      - "2379"
+      - "2380"
+    ulimits:
+      nproc: 65535
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_NAME=etcd_02
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd_02:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd_01:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd_01=http://etcd_01:2380,etcd_02=http://etcd_02:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+    extra_hosts:
+      - "etcd_01:172.16.238.3"
+      - "etcd_02:172.16.238.4"
+    networks:
+      exile_network:
+        ipv4_address: 172.16.238.4
   mongodb:
+    container_name: mongodb
     image: "m9rco/mongodb:3.6.7-dev"
     ports:
       - "27017:27017"
     networks:
       exile_network:
-        ipv4_address: 172.16.238.4
+        ipv4_address: 172.16.238.5
 networks:
   exile_network:
     driver: bridge

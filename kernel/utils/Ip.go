@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"github.com/m9rco/exile/kernel/common"
 	"net"
 )
 
@@ -26,6 +25,7 @@ func GetLocalIP() (ipv4 string, err error) {
 			}
 		}
 	}
-	err = common.ERROR_NO_LOCAL_IP_FOUND
+		err = errors.New("Nic IP not found! ")
+
 	return
 }
