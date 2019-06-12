@@ -69,7 +69,8 @@ func (jobLock *JobLock) TryLock() (err error) {
 	txn = jobLock.kv.Txn(context.TODO())
 
 	// step 5. transaction start take the lock
-	txn.If(clientv3.Compare(clientv3.CreateRevision(common.JOB_LOCK_DIR+jobLock.jobName), "=", 0)).
+	lockKey = common.JOB_LOCK_DIR+jobLock.jobName
+	txn.If(clientv3.Compare(clientv3.CreateRevision(lockKey), "=", 0)).
 		Then(clientv3.OpPut(lockKey, "", clientv3.WithLease(leaseId))).
 		Else(clientv3.OpGet(lockKey))
 
