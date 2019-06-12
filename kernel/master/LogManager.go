@@ -35,7 +35,8 @@ func InitLogMgr() (err error) {
 
 	common.Manage.SetSingleton("LogManager", LogManager{
 		client:        client,
-		logCollection: client.Database("cron").Collection("log"),
+		logCollection: client.Database(configure.GetString("mongodb", "db")).Collection(configure.GetString("mongodb", "logger")),
+	
 	})
 	return
 }
