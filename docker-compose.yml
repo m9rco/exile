@@ -28,14 +28,17 @@ services:
       nproc: 65535
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_NAME=etcd1
-      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_NAME=etcd_01
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd_01:2380
       - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
-      - ETCD_ADVERTISE_CLIENT_URLS=http://172.16.238.3:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd_01:2379
       - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
-      - ETCD_INITIAL_CLUSTER=etcd1=http://172.16.238.3:2380,etcd2=http://172.16.238.4:2380
+      - ETCD_INITIAL_CLUSTER=etcd_01=http://etcd_01:2380,etcd_02=http://etcd_02:2380
       - ETCD_INITIAL_CLUSTER_STATE=new
+    extra_hosts:
+      - "etcd_01:172.16.238.3"
+      - "etcd_02:172.16.238.4"
     networks:
       exile_network:
         ipv4_address: 172.16.238.3
@@ -49,14 +52,17 @@ services:
       nproc: 65535
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_NAME=etcd2
-      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_NAME=etcd_02
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd_02:2380
       - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
       - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
-      - ETCD_ADVERTISE_CLIENT_URLS=http://172.16.238.4:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd_01:2379
       - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
-      - ETCD_INITIAL_CLUSTER=etcd1=http://172.16.238.3:2380,etcd2=http://172.16.238.4:2380
+      - ETCD_INITIAL_CLUSTER=etcd_01=http://etcd_01:2380,etcd_02=http://etcd_02:2380
       - ETCD_INITIAL_CLUSTER_STATE=new
+    extra_hosts:
+      - "etcd_01:172.16.238.3"
+      - "etcd_02:172.16.238.4"
     networks:
       exile_network:
         ipv4_address: 172.16.238.4
