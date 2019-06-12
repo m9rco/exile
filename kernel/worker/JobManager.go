@@ -6,6 +6,7 @@ import (
 	"github.com/etcd-io/etcd/clientv3"
 	"github.com/m9rco/exile/kernel/common"
 	"github.com/m9rco/exile/kernel/utils"
+	"strings"
 	"time"
 )
 
@@ -29,7 +30,7 @@ func InitJobMgr() (err error) {
 	}
 	configure := configureSource.(utils.IniParser)
 	config = clientv3.Config{
-		Endpoints:            []string{configure.GetString("etcd", "endpoints")},
+		Endpoints:            strings.Split(configure.GetString("etcd", "endpoints"), ","),
 		AutoSyncInterval:     0,
 		DialTimeout:          time.Duration(configure.GetInt64("etcd", "dial_timeout")) * time.Millisecond,
 		DialKeepAliveTime:    0,
@@ -51,6 +52,7 @@ func InitJobMgr() (err error) {
 		client: client,
 		kv:     clientv3.NewKV(client),
 		lease:  clientv3.NewLease(client),
+		watcher: clientv3.NewWatcher(client),
 	})
 
 	jobManageSev = common.Manage.GetSingleton("JobManager").(JobManager)

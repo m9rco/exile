@@ -68,7 +68,7 @@ services:
         ipv4_address: 172.16.238.4
   mongodb:
     container_name: mongodb
-    image: "m9rco/mongodb:3.6.7-dev"
+    image: "m9rco/mongodb:3.6.7"
     ports:
       - "27017:27017"
     networks:
