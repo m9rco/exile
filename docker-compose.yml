@@ -1,6 +1,7 @@
 version: '2.0'
 services:
   golang:
+    container_name: golang
     image: "m9rco/go:1.10.8-dev"
     ports:
       - "2222:22"
@@ -18,7 +19,8 @@ services:
       exile_network:
         ipv4_address: 172.16.238.2
   etcd_01:
-    image: "m9rco/etcd:3.3.13-dev"
+    container_name: etcd_01
+    image: "m9rco/etcd:3.3.13"
     ports:
       - "2379"
       - "2380"
@@ -26,12 +28,20 @@ services:
       nproc: 65535
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_NAME=etcd1
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://172.16.238.3:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://172.16.238.3:2380,etcd2=http://172.16.238.4:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
     networks:
       exile_network:
         ipv4_address: 172.16.238.3
   etcd_02:
-    image: "m9rco/etcd:3.3.13-dev"
+    container_name: etcd_02
+    image: "m9rco/etcd:3.3.13"
     ports:
       - "2379"
       - "2380"
@@ -39,11 +49,19 @@ services:
       nproc: 65535
     environment:
       - ALLOW_NONE_AUTHENTICATION=yes
-      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_NAME=etcd2
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://172.16.238.4:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://172.16.238.3:2380,etcd2=http://172.16.238.4:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
     networks:
       exile_network:
         ipv4_address: 172.16.238.4
   mongodb:
+    container_name: mongodb
     image: "m9rco/mongodb:3.6.7-dev"
     ports:
       - "27017:27017"
