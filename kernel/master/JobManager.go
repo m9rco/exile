@@ -1,13 +1,13 @@
 package master
 
 import (
+	"context"
 	"encoding/json"
-	"fmt"
-	"github.com/coreos/etcd/mvcc/mvccpb"
-	"github.com/etcd-io/etcd/clientv3"
-	"github.com/m9rco/exile/_vendor-20190511225511/github.com/coreos/etcd/Godeps/_workspace/src/golang.org/x/net/context"
 	"github.com/m9rco/exile/kernel/common"
 	"github.com/m9rco/exile/kernel/utils"
+	"github.com/coreos/etcd/mvcc/mvccpb"
+	"github.com/etcd-io/etcd/clientv3"
+	"strings"
 	"time"
 )
 
@@ -28,7 +28,7 @@ func InitJobMgr() (err error) {
 	}
 	configure := configureSource.(utils.IniParser)
 	config = clientv3.Config{
-		Endpoints:            []string{configure.GetString("etcd", "endpoints")},
+		Endpoints:            strings.Split(configure.GetString("etcd", "endpoints"), ","),
 		AutoSyncInterval:     0,
 		DialTimeout:          time.Duration(configure.GetInt64("etcd", "dial_timeout")) * time.Millisecond,
 		DialKeepAliveTime:    0,
@@ -64,7 +64,6 @@ func (jobMgr *JobManager) ListJobs() (jobList []*common.Job, err error) {
 	if getResp, err = jobMgr.kv.Get(context.TODO(), common.JOB_SAVE_DIR, clientv3.WithPrefix()); err != nil {
 		return
 	}
-	fmt.Println(getResp)
 	jobList = make([]*common.Job, 0)
 	for _, kvPair = range getResp.Kvs {
 		job = &common.Job{}
@@ -85,7 +84,7 @@ func (jobMgr *JobManager) SaveJob(job *common.Job) (oldJob *common.Job, err erro
 		oldJobObj common.Job
 	)
 
-	jobKey = common.JOB_SAVE_DIR + job.Name
+	jobKey = common.JOB_SAVE_DIR + job.Id
 	if jobValue, err = json.Marshal(job); err != nil {
 		return
 	}

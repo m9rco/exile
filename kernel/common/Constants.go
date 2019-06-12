@@ -1,13 +1,13 @@
 package common
 
 const (
-	API_JOB_LIST   string = "/job"        // GET
-	API_JOB_CREATE        = "/job"        // POST
-	API_JOB_DELETE        = "/job/{name}" // DELETE
-	API_JOB_FETCH         = "/job/{name}" // GET
-	API_JOB_KILL          = "/job/{name}" // PUT
-	API_JOB_LOG           = "/job/log"    // GET
-	API_WORK_LIST         = "/worker"     // GET
+	API_JOB_LIST   string = "/job"        // get job list
+	API_JOB_CREATE        = "/job"        // create the jobs
+	API_JOB_DELETE        = "/job/{name}" // delete the jobs
+	API_JOB_FETCH         = "/job/{name}" // kill the jobs
+	API_JOB_KILL          = "/job/{name}" // get job log
+	API_JOB_LOG           = "/job/log"    // get 
+	API_WORK_LIST         = "/worker"     // get job work
 )
 
 const (
@@ -18,7 +18,7 @@ const (
 )
 
 const (
-	JOB_EVENT_DELETE = iota // 删除任务事件
-	JOB_EVENT_SAVE          // 保存任务事件
-	JOB_EVENT_KILL          // 强杀任务事件
+	JOB_EVENT_DELETE = iota // delete the job event
+	JOB_EVENT_SAVE          // save the job event
+	JOB_EVENT_KILL          // killer the job event
 )

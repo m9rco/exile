@@ -1,10 +1,11 @@
 package master
 
+	
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"github.com/m9rco/exile/kernel/common"
-	. "github.com/m9rco/exile/kernel/utils"
+	"github.com/m9rco/exile/kernel/utils"
+	"github.com/gorilla/mux"
 	"net"
 	"net/http"
 	"os"
@@ -23,8 +24,9 @@ var (
 )
 
 /*
-	Save the Jobs
-	method POST /job  name=job1&command=echo hello&cronExpr=*\/5 * * * * * *
+ *	Create the Job
+ *
+ *	method POST /job  message={}&position_selector={}&app_version={}
  */
 func handleJobSave(writer http.ResponseWriter, request *http.Request) {
 	var (
@@ -57,6 +59,7 @@ ERROR:
 	}
 	return
 }
+
 
 /*
 	Delete the jobs
@@ -194,8 +197,29 @@ ERR:
 	}
 }
 
-func handleWorker(_ http.ResponseWriter, _ *http.Request) {
+func handleWorker(writer http.ResponseWriter, _ *http.Request) {
+	var (
+		workerArr    []string
+		err          error
+		bytes        []byte
+		WorkerManage WorkerManager
+	)
 
+	WorkerManage = common.Manage.GetSingleton("WorkerManager").(WorkerManager)
+	if workerArr, err = WorkerManage.ListWorkers(); err != nil {
+		goto ERR
+	}
+
+	// response
+	if bytes, err = common.BuildResponse(0, "success", workerArr); err == nil {
+		writer.Write(bytes)
+	}
+	return
+
+ERR:
+	if bytes, err = common.BuildResponse(-1, err.Error(), nil); err == nil {
+		writer.Write(bytes)
+	}
 }
 
 // Initialize the service
@@ -209,7 +233,7 @@ func InitApiServer() (err error) {
 		fmt.Printf("fail to read file: %v", err)
 		os.Exit(1)
 	}
-	configure := configureSource.(IniParser)
+	configure := configureSource.(utils.IniParser)
 	router := mux.NewRouter().StrictSlash(true)
 
 	// Configure the routers

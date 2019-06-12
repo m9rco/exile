@@ -53,7 +53,7 @@ func InitRegister() (err error) {
 		localIP: localIp,
 	})
 
-	RegisterSev = common.Manage.GetSingleton("JobManager").(Register)
+	RegisterSev = common.Manage.GetSingleton("Register").(Register)
 	go RegisterSev.keepOnline()
 	return
 }

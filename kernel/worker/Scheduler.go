@@ -21,7 +21,7 @@ func InitScheduler() (err error) {
 		jobExecutingTable: make(map[string]*common.JobExecuteInfo),
 		jobResultChan:     make(chan *common.JobExecuteResult, 1000),
 	})
-	scheduler := common.Manage.GetSingleton("JobManager").(Scheduler)
+	scheduler := common.Manage.GetSingleton("Scheduler").(Scheduler)
 	go scheduler.scheduleLoop() // start scheduler
 	return
 }

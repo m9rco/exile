@@ -20,9 +20,15 @@ func init() {
 		fmt.Printf("init container fail: %v", err)
 		goto ERROR
 	}
+	
+	// Initialize the master logger manager
+	if err = master.InitWorkerMgr(); err != nil {
+		fmt.Printf("init Job worker fail: %v", err)
+		goto ERROR
+	}
 
-	// Initialize the master job manager
-	if err = master.InitJobMgr(); err != nil {
+	// Initialize the master logger manager
+	if err = master.InitLogMgr(); err != nil {
 		fmt.Printf("init Job Manager fail: %v", err)
 		goto ERROR
 	}
