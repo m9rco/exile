@@ -1,4 +1,3 @@
-WorkerManager.go
 package master
 
 import (

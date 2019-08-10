@@ -2,7 +2,7 @@ package common
 
 import (
 	"fmt"
-	"git.kids.qihoo.net/go/riven/kernel/utils"
+	"github.com/m9rco/exile/kernel/utils"
 	"os"
 )
 
