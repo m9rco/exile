@@ -15,6 +15,7 @@ func init() {
 		err error
 	)
 	figure.NewFigure("Exile Client", "", true).Print()
+	println(" ")
 
 	// Initialize the container
 	if err = common.InitContainer(); err != nil {
@@ -57,7 +58,9 @@ func init() {
 	}
 	println("Initialize  job manager success ...")
 ERROR:
-	println(err.Error())
+	if err != nil {
+		println(err.Error())
+	}
 }
 
 func main() {

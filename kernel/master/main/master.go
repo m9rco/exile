@@ -16,6 +16,7 @@ func init() {
 		err error
 	)
 	figure.NewFigure("Exile Server", "", true).Print()
+	println(" ")
 
 	// Initialize the container
 	if err = common.InitContainer(); err != nil {
@@ -33,6 +34,13 @@ func init() {
 
 	// Initialize the master logger manager
 	if err = master.InitLogMgr(); err != nil {
+		fmt.Printf("init log Manager fail: %v", err)
+		goto ERROR
+	}
+	println("Initialize log manager success ...")
+
+	// Initialize the job  manager
+	if err = master.InitJobMgr(); err != nil {
 		fmt.Printf("init job Manager fail: %v", err)
 		goto ERROR
 	}
@@ -40,13 +48,15 @@ func init() {
 
 	// Initialize the master api serve
 	if err = master.InitApiServer(); err != nil {
-		fmt.Printf("init api serve fail: %v", err)
+		fmt.Printf("init api server fail: %v", err)
 		goto ERROR
 	}
-	println("Initialize api serve success ...")
+	println("Initialize api server success ...")
 
 ERROR:
-	println(err.Error())
+	if err != nil {
+		println(err.Error())
+	}
 }
 
 func main() {
