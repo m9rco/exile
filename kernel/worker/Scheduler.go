@@ -132,7 +132,8 @@ func (scheduler *Scheduler) handleJobResult(result *common.JobExecuteResult) {
 		} else {
 			jobLog.Err = ""
 		}
-		common.Manage.GetSingleton("LogManager").(LogManager).Append(jobLog)
+		logManage := common.Manage.GetSingleton("LogManager").(LogManager)
+		logManage.Append(jobLog)
 	}
 	fmt.Println("job execute is finished:", result.ExecuteInfo.Job.Name, string(result.Output), result.Err)
 }

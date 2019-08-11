@@ -84,7 +84,7 @@ func (jobMgr *JobManager) SaveJob(job *common.Job) (oldJob *common.Job, err erro
 		oldJobObj common.Job
 	)
 
-	jobKey = common.JOB_SAVE_DIR + job.Id
+	jobKey = common.JOB_SAVE_DIR + job.Name
 	if jobValue, err = json.Marshal(job); err != nil {
 		return
 	}
