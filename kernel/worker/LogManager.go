@@ -40,7 +40,7 @@ func InitLogSink() (err error) {
 	// switch the db and collection
 	common.Manage.SetSingleton("LogManager", LogManager{
 		client:         client,
-		logCollection:  client.Database(configure.GetString("mongodb", "db")).Collection(configure.GetString("mongodb", "logger")),
+		logCollection:  client.Database(configure.GetString("mongodb", "db")).Collection(configure.GetString("mongodb", "collection")),
 		logChan:        make(chan *common.JobLog, 1000),
 		autoCommitChan: make(chan *common.LogBatch, 1000),
 	})
@@ -61,7 +61,10 @@ func (logSink *LogManager) Append(jobLog *common.JobLog) {
 
 // batch write logger
 func (logSink *LogManager) saveLogs(batch *common.LogBatch) {
-	logSink.logCollection.InsertMany(context.TODO(), batch.Logs)
+	var err error
+	if _, err = logSink.logCollection.InsertMany(context.TODO(), batch.Logs); err != nil {
+		fmt.Println(err.Error())
+	}
 }
 
 // logger save goroutine
@@ -81,7 +84,6 @@ func (logSink *LogManager) writeLoop() {
 		return
 	}
 	configure = configureSource.(utils.IniParser)
-
 	for {
 		select {
 		case log = <-logSink.logChan:
