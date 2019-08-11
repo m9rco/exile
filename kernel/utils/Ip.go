@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"net"
 )
 
@@ -25,7 +26,7 @@ func GetLocalIP() (ipv4 string, err error) {
 			}
 		}
 	}
-		err = errors.New("Nic IP not found! ")
+	err = errors.New("没有找到网卡IP")
 
 	return
 }
