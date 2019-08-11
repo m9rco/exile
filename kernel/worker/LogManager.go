@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"fmt"
 	"github.com/m9rco/exile/kernel/common"
 	"github.com/m9rco/exile/kernel/utils"
 	"github.com/mongodb/mongo-go-driver/mongo"
@@ -19,11 +20,16 @@ type LogManager struct {
 // initialize the InitLogSink
 func InitLogSink() (err error) {
 	var (
-		client        *mongo.Client
-		configure     utils.IniParser
-		LogManagerSev LogManager
+		client          *mongo.Client
+		configure       utils.IniParser
+		LogManagerSev   LogManager
+		configureSource interface{}
 	)
-	configure = common.Manage.GetSingleton("configure").(utils.IniParser)
+	if configureSource, err = common.Manage.GetPrototype("configure"); err != nil {
+		fmt.Printf("fail to read file: %v", err)
+		return
+	}
+	configure = configureSource.(utils.IniParser)
 	// init a mango connect
 	if client, err = mongo.Connect(
 		context.TODO(),
@@ -61,13 +67,20 @@ func (logSink *LogManager) saveLogs(batch *common.LogBatch) {
 // logger save goroutine
 func (logSink *LogManager) writeLoop() {
 	var (
-		log          *common.JobLog
-		logBatch     *common.LogBatch
-		commitTimer  *time.Timer
-		timeoutBatch *common.LogBatch
-		configure    utils.IniParser
+		log             *common.JobLog
+		logBatch        *common.LogBatch
+		commitTimer     *time.Timer
+		timeoutBatch    *common.LogBatch
+		configure       utils.IniParser
+		configureSource interface{}
+		err             error
 	)
-	configure = common.Manage.GetSingleton("configure").(utils.IniParser)
+
+	if configureSource, err = common.Manage.GetPrototype("configure"); err != nil {
+		fmt.Printf("fail to read file: %v", err)
+		return
+	}
+	configure = configureSource.(utils.IniParser)
 
 	for {
 		select {
