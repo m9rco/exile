@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  branch = "master"
+  digest = "1:083caed86277ee2b48cc2dd692321170ac5cbbca3d08cf2259a8b82c0cb0dee7"
+  name = "github.com/common-nighthawk/go-figure"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "67e0ed34491ae997c83c5aa2a1cae2cfd4b4ac41"
+
+[[projects]]
   digest = "1:b4ba0dcf39b5ba06f69d9cd4eaacaba334801073099eb8be273d595094c99db3"
   name = "github.com/coreos/etcd"
   packages = [
@@ -260,6 +268,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/common-nighthawk/go-figure",
     "github.com/coreos/etcd/mvcc/mvccpb",
     "github.com/etcd-io/etcd/clientv3",
     "github.com/gorhill/cronexpr",

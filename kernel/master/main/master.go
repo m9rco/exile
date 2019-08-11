@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/common-nighthawk/go-figure"
 	"github.com/m9rco/exile/kernel/common"
 	"github.com/m9rco/exile/kernel/master"
 	"runtime"
@@ -14,13 +15,15 @@ func init() {
 	var (
 		err error
 	)
+	myFigure := figure.NewFigure("exile", "", true)
+	myFigure.Print()
 
 	// Initialize the container
 	if err = common.InitContainer(); err != nil {
 		fmt.Printf("init container fail: %v", err)
 		goto ERROR
 	}
-	
+
 	// Initialize the master logger manager
 	if err = master.InitWorkerMgr(); err != nil {
 		fmt.Printf("init Job worker fail: %v", err)
@@ -43,7 +46,7 @@ ERROR:
 
 func main() {
 	var wg sync.WaitGroup
-	
+
 	wg.Add(1)
 	wg.Wait()
 }
