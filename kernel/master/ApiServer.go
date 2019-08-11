@@ -1,11 +1,10 @@
 package master
 
-	
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/m9rco/exile/kernel/common"
 	"github.com/m9rco/exile/kernel/utils"
-	"github.com/gorilla/mux"
 	"net"
 	"net/http"
 	"os"
@@ -59,7 +58,6 @@ ERROR:
 	}
 	return
 }
-
 
 /*
 	Delete the jobs

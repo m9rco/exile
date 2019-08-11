@@ -26,16 +26,28 @@
 
 
 [[constraint]]
+  name = "github.com/coreos/etcd"
+  version = "3.3.13"
+
+[[constraint]]
   name = "github.com/etcd-io/etcd"
   version = "3.3.13"
+
+[[constraint]]
+  name = "github.com/gorhill/cronexpr"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/gorilla/mux"
+  version = "1.7.3"
 
 [[constraint]]
   name = "github.com/mongodb/mongo-go-driver"
   version = "0.0.17"
 
 [[constraint]]
-  name = "github.com/gorhill/cronexpr"
-  version = "1.0.0"
+  name = "gopkg.in/ini.v1"
+  version = "1.46.0"
 
 [prune]
   go-tests = true
