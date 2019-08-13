@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://p5.ssl.qhimgs0.com/t01eee2efd1cc1e35d4.jpg" />
+<img src="//p5.ssl.qhimgs0.com/t01eee2efd1cc1e35d4.jpg" />
 </p>
 
 > Exile , 一款基于GoLang的分布式任务调度系统
@@ -22,3 +22,9 @@
 
 
 Z Scale
+
+## 结构图
+
+<p align="center">
+<img src="structure.png"/>
+</p>
