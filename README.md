@@ -1,5 +1,5 @@
 <p align="center">
-<img src="log.jpg" />
+<img src="logo.jpg" />
 </p>
 
 > Exile , 一款基于GoLang的分布式任务调度系统
